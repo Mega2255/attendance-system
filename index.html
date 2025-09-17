@@ -718,8 +718,8 @@
                 const currentTimeDecimal = currentHour + (currentMinute / 60);
                 
                 // Allow from 4:30 PM to 6:30 PM for better flexibility
-                if (currentTimeDecimal < 4.0 || currentTimeDecimal >= 6.25) {
-                    throw new Error(`Attendance closed. Only allowed 8:00-8:25 AM Nigeria time. Current time: ${nigeriaTime.toLocaleTimeString()}`);
+                if (currentTimeDecimal < 8.0 || currentTimeDecimal >= 8.30) {
+                    throw new Error(`Attendance closed. Only allowed 8:00-8:30 AM Nigeria time. Current time: ${nigeriaTime.toLocaleTimeString()}`);
                 }
 
                 // Check 3: Location verification - IMPROVED
