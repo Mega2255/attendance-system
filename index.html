@@ -452,9 +452,9 @@
         let currentUser = null;
         let deviceId = null;
         const CDS_VENUE = {
-            latitude: 5.541987, // Your exact coordinates
-            longitude: 7.500651,
-            radius: 500 // Increased to 500 meters for better tolerance
+            latitude: 5.524645, // Your exact coordinates
+            longitude: 7.497332,
+            radius: 800 // Increased to 500 meters for better tolerance
         };
 
         // Initialize the app
@@ -708,8 +708,8 @@
                 updateDebugInfo(nigeriaTime);
 
                 // Check 1: Day verification (Sunday = 0)
-                if (nigeriaTime.getDay() !== 0) {
-                    throw new Error('Attendance can only be marked on Sundays.');
+                if (nigeriaTime.getDay() !== 3) {
+                    throw new Error('Attendance can only be marked on Wednesday.');
                 }
 
                 // Check 2: Time verification (5:00 - 6:00 PM) - More flexible
@@ -718,8 +718,8 @@
                 const currentTimeDecimal = currentHour + (currentMinute / 60);
                 
                 // Allow from 4:30 PM to 6:30 PM for better flexibility
-                if (currentTimeDecimal < 18.5 || currentTimeDecimal >= 19.5) {
-                    throw new Error(`Attendance closed. Only allowed 4:30-6:30 PM Nigeria time. Current time: ${nigeriaTime.toLocaleTimeString()}`);
+                if (currentTimeDecimal < 4.0 || currentTimeDecimal >= 6.25) {
+                    throw new Error(`Attendance closed. Only allowed 8:00-8:25 AM Nigeria time. Current time: ${nigeriaTime.toLocaleTimeString()}`);
                 }
 
                 // Check 3: Location verification - IMPROVED
