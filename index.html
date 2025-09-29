@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYSC CDS Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .nysc-illustration {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Firebase Configuration -->
+    <script>
+        const firebaseConfig = {
+           apiKey: "AIzaSyDNeTFUqrd2fPN62YNWdAqFkouhz7fCMOI",
+  authDomain: "cds-attendance-4c1d0.firebaseapp.com",
+  databaseURL: "https://cds-attendance-4c1d0-default-rtdb.firebaseio.com/",
+  projectId: "cds-attendance-4c1d0",
+  storageBucket: "cds-attendance-4c1d0.firebasestorage.app",
+  messagingSenderId: "500763577637",
+  appId: "1:500763577637:web:f0ebb9610727cd06cf1ecc"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+        const auth = firebase.auth();
+    </script>
+
+    <!-- Registration Page -->
+    <div id="registerPage" class="hidden min-h-screen flex flex-col">
+        <div class="flex-1 flex">
+            <!-- Left Side - Illustration -->
+            <div class="hidden lg:flex lg:w-1/2 bg-gray-100 items-center justify-center p-8">
+                <div class="text-center">
+                    <div class="w-80 h-80 nysc-illustration mx-auto mb-8 flex items-center justify-center relative overflow-hidden">
+                        <!-- NYSC Corper Illustration -->
+                        <svg viewBox="0 0 300 300" class="w-full h-full">
+                            <!-- Background circle -->
+                            <circle cx="150" cy="150" r="140" fill="#d1fae5" opacity="0.6"/>
+                            
+                            <!-- First Corper -->
+                            <g transform="translate(80, 60)">
+                                <!-- Face -->
+                                <circle cx="30" cy="40" r="20" fill="#8b5a3c"/>
+                                <!-- Eyes -->
+                                <circle cx="25" cy="35" r="2" fill="#000"/>
+                                <circle cx="35" cy="35" r="2" fill="#000"/>
+                                <!-- Smile -->
+                                <path d="M 22 45 Q 30 50 38 45" stroke="#000" stroke-width="1.5" fill="none"/>
+                                <!-- Cap -->
+                                <ellipse cx="30" cy="25" rx="25" ry="8" fill="#059669"/>
+                                <circle cx="30" cy="20" r="3" fill="#fbbf24" stroke="#dc2626" stroke-width="1"/>
+                                <!-- Body -->
+                                <rect x="15" y="55" width="30" height="35" fill="#fff" rx="5"/>
+                                <text x="30" y="75" text-anchor="middle" fill="#059669" font-size="8" font-weight="bold">NYSC</text>
+                                <!-- Arms -->
+                                <circle cx="5" cy="65" r="8" fill="#8b5a3c"/>
+                                <rect x="0" y="60" width="15" height="8" fill="#8b5a3c"/>
+                                <circle cx="55" cy="70" r="8" fill="#8b5a3c"/>
+                                <rect x="45" y="65" width="15" height="8" fill="#8b5a3c"/>
+                                <!-- Waving hand -->
+                                <g transform="translate(-10, 50)">
+                                    <rect x="0" y="0" width="3" height="8" fill="#8b5a3c"/>
+                                    <rect x="3" y="-2" width="3" height="8" fill="#8b5a3c"/>
+                                    <rect x="6" y="-1" width="3" height="8" fill="#8b5a3c"/>
+                                    <rect x="9" y="0" width="3" height="8" fill="#8b5a3c"/>
+                                </g>
+                                <!-- Legs -->
+                                <rect x="20" y="90" width="8" height="25" fill="#059669"/>
+                                <rect x="32" y="90" width="8" height="25" fill="#059669"/>
+                                <rect x="18" y="115" width="12" height="6" fill="#000"/>
+                                <rect x="30" y="115" width="12" height="6" fill="#000"/>
+                            </g>
+                            
+                            <!-- Second Corper -->
+                            <g transform="translate(160, 80)">
+                                <!-- Face -->
+                                <circle cx="30" cy="40" r="20" fill="#8b5a3c"/>
+                                <!-- Eyes -->
+                                <circle cx="25" cy="35" r="2" fill="#000"/>
+                                <circle cx="35" cy="35" r="2" fill="#000"/>
+                                <!-- Smile -->
+                                <path d="M 22 45 Q 30 50 38 45" stroke="#000" stroke-width="1.5" fill="none"/>
+                                <!-- Cap -->
+                                <ellipse cx="30" cy="25" rx="25" ry="8" fill="#059669"/>
+                                <circle cx="30" cy="20" r="3" fill="#fbbf24" stroke="#dc2626" stroke-width="1"/>
+                                <!-- Body -->
+                                <rect x="15" y="55" width="30" height="35" fill="#fff" rx="5"/>
+                                <text x="30" y="75" text-anchor="middle" fill="#059669" font-size="8" font-weight="bold">NYSC</text>
+                                <!-- Arms crossed -->
+                                <circle cx="8" cy="65" r="8" fill="#8b5a3c"/>
+                                <circle cx="52" cy="65" r="8" fill="#8b5a3c"/>
+                                <rect x="15" y="60" width="30" height="8" fill="#8b5a3c"/>
+                                <!-- Legs -->
+                                <rect x="20" y="90" width="8" height="25" fill="#059669"/>
+                                <rect x="32" y="90" width="8" height="25" fill="#059669"/>
+                                <rect x="18" y="115" width="12" height="6" fill="#000"/>
+                                <rect x="30" y="115" width="12" height="6" fill="#000"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Side - Form -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8">
+                <div class="w-full max-w-md">
+                    <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 fade-in">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8">Registration</h2>
+                        
+                        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 sm:space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" id="regFullName" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="regEmail" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">State Code</label>
+                                <input type="text" id="regStateCode" placeholder="NY/23B/4567" required 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input type="password" id="regPassword" required minlength="6"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                            </div>
+                            
+                            <button type="submit" id="registerBtn"
+                                    class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg text-lg transition-all duration-200 transform hover:scale-105">
+                                Sign Up
+                            </button>
+                        </form>
+                        
+                        <div class="mt-6 text-center">
+                            <span class="text-gray-600">Already have an account? </span>
+                            <button onclick="showLogin()" class="text-green-500 hover:text-green-600 font-medium">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="bg-green-600 text-white py-4 text-center">
+            <p class="text-sm">Powered by DL4ALL Batch C1 2024</p>
+        </footer>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="hidden min-h-screen flex flex-col">
+        <div class="flex-1 flex items-center justify-center p-4">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8 fade-in">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">NYSC CDS</h1>
+                    <p class="text-lg sm:text-xl text-gray-600">Attendance</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 fade-in">
+                    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="loginEmail" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <input type="password" id="loginPassword" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                        </div>
+                        
+                        <div class="text-right">
+                            <button type="button" onclick="showPasswordReset()" class="text-sm text-green-500 hover:text-green-600 font-medium">
+                                Forgot Password?
+                            </button>
+                        </div>
+                        
+                        <button type="submit" id="loginBtn"
+                                class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg text-lg transition-all duration-200 transform hover:scale-105">
+                            Login
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center">
+                        <span class="text-gray-600">Don't have an account? </span>
+                        <button onclick="showRegister()" class="text-green-500 hover:text-green-600 font-medium">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="bg-green-600 text-white py-4 text-center">
+            <p class="text-sm">Powered by DL4ALL Batch C1 2024</p>
+        </footer>
+    </div>
+
+    <!-- Password Reset Page -->
+    <div id="passwordResetPage" class="hidden min-h-screen flex flex-col">
+        <div class="flex-1 flex items-center justify-center p-4">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8 fade-in">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Reset Password</h1>
+                    <p class="text-lg sm:text-xl text-gray-600">Enter your email to receive reset link</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8 fade-in">
+                    <form id="passwordResetForm" onsubmit="handlePasswordReset(event)" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="resetEmail" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                        </div>
+                        
+                        <button type="submit" id="resetBtn"
+                                class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg text-lg transition-all duration-200 transform hover:scale-105">
+                            Send Reset Link
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center">
+                        <button onclick="showLogin()" class="text-green-500 hover:text-green-600 font-medium">Back to Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="bg-green-600 text-white py-4 text-center">
+            <p class="text-sm">Powered by DL4ALL Batch C1 2024</p>
+        </footer>
+    </div>
+
+    <!-- Email Verification Banner -->
+    <div id="emailVerificationBanner" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-sm text-yellow-700">
+                    Your email is not verified. 
+                    <button onclick="resendVerificationEmail()" class="font-medium underline hover:text-yellow-800">Resend verification email</button>
+                </p>
+            </div>
+            <button onclick="closeVerificationBanner()" class="text-yellow-700 hover:text-yellow-800">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden min-h-screen flex flex-col">
+        <div class="flex-1">
+            <!-- Header -->
+            <header class="bg-white shadow-sm px-4 sm:px-6 py-4">
+                <div class="flex justify-between items-center max-w-7xl mx-auto">
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Dashboard</h1>
+                    <div class="flex items-center space-x-2 sm:space-x-4">
+                        <span class="hidden sm:inline text-gray-600 font-medium">Profile</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-semibold text-xs sm:text-sm" id="userInitials">JD</span>
+                        </div>
+                        <button onclick="logout()" class="text-gray-600 hover:text-gray-800 font-medium text-sm sm:text-base">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+                <!-- Welcome Section -->
+                <div class="mb-6 sm:mb-8">
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">Welcome, <span id="userName">Jane Doe</span></h2>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <!-- Total Attendance -->
+                    <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="totalAttendance">0</div>
+                        <div class="text-gray-600 font-medium text-sm sm:text-base">Total Attendance</div>
+                    </div>
+
+                    <!-- Absent Days -->
+                    <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="absentDays">0</div>
+                        <div class="text-gray-600 font-medium text-sm sm:text-base">Absent Days</div>
+                    </div>
+
+                    <!-- Attendance Percentage -->
+                    <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm sm:col-span-2 lg:col-span-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-bold text-green-600 mb-1" id="attendancePercentage">0%</div>
+                        <div class="text-gray-600 font-medium text-sm sm:text-base">Attendance</div>
+                    </div>
+                </div>
+
+                <!-- Action Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <!-- Mark Attendance Button -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                            <button 
+                                id="markAttendanceBtn"
+                                onclick="markAttendance()"
+                                class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg text-base sm:text-lg transition-all duration-200 transform hover:scale-105"
+                            >
+                                Mark Attendance
+                            </button>
+                            <div id="statusMessage" class="mt-4 text-center text-sm sm:text-base"></div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Card -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-lg p-4 sm:p-6 shadow-sm text-center">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white font-semibold text-sm sm:text-lg" id="profileInitials">JD</span>
+                            </div>
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-800" id="profileName">Jane Doe</h3>
+                            <p class="text-gray-600 text-xs sm:text-sm mt-1" id="stateCode">NY/23B/4567</p>
+                            <p class="text-gray-600 text-xs sm:text-sm" id="cdsGroup">CDS Group A</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="bg-green-600 text-white py-4 text-center mt-8">
+            <p class="text-sm">Powered by DL4ALL Batch C1 2024</p>
+        </footer>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Late Arrival</h3>
+                <p class="text-gray-600 mb-4">You're arriving late. Please pay the lateness fee of ₦500 to mark attendance.</p>
+                <div class="flex gap-3">
+                    <button onclick="processPayment()" class="flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                        Pay ₦500
+                    </button>
+                    <button onclick="closePaymentModal()" class="flex-1 bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500 transition">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full">
+            <div class="text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+                <p class="text-gray-700">Processing...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error/Success Message Modal -->
+    <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full">
+            <div class="text-center">
+                <div id="messageIcon" class="mb-4"></div>
+                <p id="messageText" class="text-gray-700 mb-4"></p>
+                <button onclick="closeMessageModal()" class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let deviceId = null;
+        let cdsSettings = null;
+        let pendingAttendance = false;
+        const PAYSTACK_PUBLIC_KEY = 'pk_test_999272a0f78c0c01e322862d46eba5a7c34fdf15'; // Replace with your actual key
+
+        // Initialize the app
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        // Initialize application
+        function initializeApp() {
+            deviceId = generateDeviceId();
+            loadCDSSettings();
+            
+            // Check authentication state
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Check email verification status
+                    checkEmailVerification(user);
+                    loadUserData(user);
+                } else {
+                    showLogin();
+                }
+            });
+        }
+
+        // Check email verification
+        function checkEmailVerification(user) {
+            if (!user.emailVerified) {
+                showVerificationBanner();
+            } else {
+                hideVerificationBanner();
+            }
+        }
+
+        // Show verification banner
+        function showVerificationBanner() {
+            const banner = document.getElementById('emailVerificationBanner');
+            if (banner) {
+                banner.classList.remove('hidden');
+            }
+        }
+
+        // Hide verification banner
+        function hideVerificationBanner() {
+            const banner = document.getElementById('emailVerificationBanner');
+            if (banner) {
+                banner.classList.add('hidden');
+            }
+        }
+
+        // Close verification banner
+        function closeVerificationBanner() {
+            hideVerificationBanner();
+        }
+
+        // Resend verification email
+        async function resendVerificationEmail() {
+            try {
+                const user = auth.currentUser;
+                if (user && !user.emailVerified) {
+                    await user.sendEmailVerification();
+                    showMessage('Verification email sent! Please check your inbox.', 'success');
+                }
+            } catch (error) {
+                showMessage('Error sending verification email: ' + error.message, 'error');
+            }
+        }
+
+        // Load CDS settings from Firebase
+        async function loadCDSSettings() {
+            try {
+                const settingsRef = database.ref('settings/cds');
+                const snapshot = await settingsRef.once('value');
+                cdsSettings = snapshot.val() || {
+                    latitude: 6.5244,
+                    longitude: 3.3792,
+                    radius: 100,
+                    attendanceDay: 3, // Wednesday
+                    startHour: 8,
+                    endHour: 9,
+                    latenessFee: 500
+                };
+            } catch (error) {
+                console.error('Error loading CDS settings:', error);
+                // Use default settings
+                cdsSettings = {
+                    latitude: 6.5244,
+                    longitude: 3.3792,
+                    radius: 100,
+                    attendanceDay: 3,
+                    startHour: 8,
+                    endHour: 9,
+                    latenessFee: 500
+                };
+            }
+        }
+
+        // Load user data from Firebase
+        async function loadUserData(user) {
+            try {
+                const userRef = database.ref(`users/${user.uid}`);
+                const snapshot = await userRef.once('value');
+                const userData = snapshot.val();
+                
+                if (userData) {
+                    currentUser = { ...userData, uid: user.uid, emailVerified: user.emailVerified };
+                    showDashboard();
+                } else {
+                    // User data not found, logout
+                    auth.signOut();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                auth.signOut();
+            }
+        }
+
+        // Generate unique device fingerprint
+        function generateDeviceId() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('Device fingerprint', 2, 2);
+            
+            const fingerprint = [
+                navigator.userAgent,
+                screen.width + 'x' + screen.height,
+                screen.colorDepth,
+                Intl.DateTimeFormat().resolvedOptions().timeZone,
+                navigator.language,
+                canvas.toDataURL()
+            ].join('|');
+            
+            return btoa(fingerprint);
+        }
+
+        // Show/Hide pages
+        function showRegister() {
+            document.getElementById('registerPage').classList.remove('hidden');
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('passwordResetPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            document.getElementById('passwordResetPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        function showPasswordReset() {
+            document.getElementById('passwordResetPage').classList.remove('hidden');
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            document.getElementById('passwordResetPage').classList.add('hidden');
+            updateUI();
+            loadAttendanceData();
+        }
+
+        // Handle registration
+        async function handleRegister(event) {
+            event.preventDefault();
+            showLoading(true);
+            
+            try {
+                const fullName = document.getElementById('regFullName').value;
+                const email = document.getElementById('regEmail').value;
+                const stateCode = document.getElementById('regStateCode').value;
+                const password = document.getElementById('regPassword').value;
+                
+                // Create user account
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Send email verification
+                await user.sendEmailVerification();
+                
+                // Save user data to database
+                await database.ref(`users/${user.uid}`).set({
+                    fullName: fullName,
+                    email: email,
+                    stateCode: stateCode,
+                    registeredAt: firebase.database.ServerValue.TIMESTAMP,
+                    deviceId: deviceId
+                });
+                
+                showMessage('Registration successful! Please check your email to verify your account.', 'success');
+                
+            } catch (error) {
+                showMessage(error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Enhanced error handling for login
+        async function handleLogin(event) {
+            event.preventDefault();
+            showLoading(true);
+            
+            try {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                await auth.signInWithEmailAndPassword(email, password);
+                
+            } catch (error) {
+                let errorMessage = 'Login failed. ';
+                
+                // Handle specific error cases
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage += 'No account found with this email address.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage += 'Incorrect password. Try again or reset your password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Please enter a valid email address.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage += 'This account has been disabled.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage += 'Too many failed attempts. Please try again later.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showMessage(errorMessage, 'error');
+                showLoading(false);
+            }
+        }
+
+        // Handle password reset
+        async function handlePasswordReset(event) {
+            event.preventDefault();
+            showLoading(true);
+            
+            try {
+                const email = document.getElementById('resetEmail').value;
+                
+                await auth.sendPasswordResetEmail(email);
+                
+                showMessage('Password reset link sent! Please check your email.', 'success');
+                setTimeout(() => showLogin(), 2000);
+                
+            } catch (error) {
+                let errorMessage = 'Password reset failed. ';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage += 'No account found with this email address.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage += 'Please enter a valid email address.';
+                        break;
+                    default:
+                        errorMessage += error.message;
+                }
+                
+                showMessage(errorMessage, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Update UI with user information
+        function updateUI() {
+            if (!currentUser) return;
+            
+            const initials = currentUser.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userName').textContent = currentUser.fullName;
+            document.getElementById('userInitials').textContent = initials;
+            document.getElementById('profileInitials').textContent = initials;
+            document.getElementById('profileName').textContent = currentUser.fullName;
+            document.getElementById('stateCode').textContent = currentUser.stateCode;
+        }
+
+        // Load attendance data from Firebase
+        function loadAttendanceData() {
+            if (!currentUser) return;
+
+            const attendanceRef = database.ref(`attendance/${currentUser.uid}`);
+            attendanceRef.on('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                const attendanceRecords = Object.values(data);
+                
+                const totalDays = attendanceRecords.length;
+                const presentDays = attendanceRecords.filter(record => record.status === 'present').length;
+                const absentDays = Math.max(0, totalDays - presentDays);
+                const percentage = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
+
+                document.getElementById('totalAttendance').textContent = presentDays;
+                document.getElementById('absentDays').textContent = absentDays;
+                document.getElementById('attendancePercentage').textContent = percentage + '%';
+            });
+        }
+
+        // Mark attendance function
+        async function markAttendance() {
+            showLoading(true);
+            
+            try {
+                // Check email verification
+                const user = auth.currentUser;
+                if (user && !user.emailVerified) {
+                    throw new Error('Please verify your email address before marking attendance.');
+                }
+
+                // Check 1: Device verification - Check if ANY device has marked attendance today
+                const today = new Date();
+                const dateKey = today.toISOString().split('T')[0];
+                
+                // Check if this device has already marked attendance today for ANY user
+                const allAttendanceRef = database.ref('attendance');
+                const allAttendanceSnapshot = await allAttendanceRef.once('value');
+                const allAttendance = allAttendanceSnapshot.val() || {};
+                
+                // Check if current device has marked attendance today
+                for (const userId in allAttendance) {
+                    const userAttendance = allAttendance[userId][dateKey];
+                    if (userAttendance && userAttendance.deviceId === deviceId) {
+                        throw new Error('This device has already been used to mark attendance today.');
+                    }
+                }
+
+                // Check 2: Day verification
+                if (today.getDay() !== cdsSettings.attendanceDay) {
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    throw new Error(`Attendance can only be marked on ${dayNames[cdsSettings.attendanceDay]}s.`);
+                }
+
+                // Check 3: Check if already marked today
+                const attendanceRef = database.ref(`attendance/${currentUser.uid}/${dateKey}`);
+                const snapshot = await attendanceRef.once('value');
+                
+                if (snapshot.exists()) {
+                    throw new Error('Attendance already marked for today.');
+                }
+
+                // Check 4: Time verification and lateness
+                const currentHour = today.getHours();
+                const currentMinutes = today.getMinutes();
+                const currentTimeInMinutes = currentHour * 60 + currentMinutes;
+                const startTimeInMinutes = cdsSettings.startHour * 60;
+                const endTimeInMinutes = cdsSettings.endHour * 60;
+                
+                let isLate = false;
+                
+                if (currentTimeInMinutes < startTimeInMinutes || currentTimeInMinutes >= endTimeInMinutes + 60) {
+                    throw new Error(`Attendance window is ${cdsSettings.startHour}:00 - ${cdsSettings.endHour + 1}:00. You are outside the allowed time.`);
+                }
+                
+                // Check if late (after end hour)
+                if (currentTimeInMinutes >= endTimeInMinutes) {
+                    isLate = true;
+                }
+
+                // Check 5: Location verification
+                const position = await getCurrentPosition();
+                const distance = calculateDistance(
+                    position.coords.latitude,
+                    position.coords.longitude,
+                    cdsSettings.latitude,
+                    cdsSettings.longitude
+                );
+
+                if (distance > cdsSettings.radius) {
+                    throw new Error(`You must be within ${cdsSettings.radius}m of CDS venue to mark attendance.`);
+                }
+
+                // If late, require payment
+                if (isLate) {
+                    pendingAttendance = {
+                        position: position,
+                        dateKey: dateKey,
+                        deviceId: deviceId
+                    };
+                    showLoading(false);
+                    showPaymentModal();
+                    return;
+                }
+
+                // Mark attendance if not late
+                await completeAttendanceMarking(position, dateKey, deviceId, false, null);
+                
+            } catch (error) {
+                showLoading(false);
+                showMessage(error.message, 'error');
+            }
+        }
+
+        // Complete attendance marking
+        async function completeAttendanceMarking(position, dateKey, deviceId, isLate, paymentReference) {
+            try {
+                const attendanceData = {
+                    status: 'present',
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    deviceId: deviceId,
+                    location: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    },
+                    isLate: isLate
+                };
+
+                if (isLate && paymentReference) {
+                    attendanceData.latenessFee = cdsSettings.latenessFee;
+                    attendanceData.paymentReference = paymentReference;
+                }
+
+                const attendanceRef = database.ref(`attendance/${currentUser.uid}/${dateKey}`);
+                await attendanceRef.set(attendanceData);
+
+                // Update device ID if not set
+                if (!currentUser.deviceId) {
+                    await database.ref(`users/${currentUser.uid}/deviceId`).set(deviceId);
+                    currentUser.deviceId = deviceId;
+                }
+
+                showLoading(false);
+                const message = isLate ? 'Lateness fee paid. Attendance marked successfully!' : 'Attendance marked successfully!';
+                showMessage(message, 'success');
+                
+            } catch (error) {
+                showLoading(false);
+                showMessage('Error marking attendance: ' + error.message, 'error');
+            }
+        }
+
+        // Show payment modal
+        function showPaymentModal() {
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('paymentModal').classList.add('flex');
+        }
+
+        // Close payment modal
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            document.getElementById('paymentModal').classList.remove('flex');
+            pendingAttendance = false;
+        }
+
+        // Process payment with Paystack
+        function processPayment() {
+            if (!pendingAttendance) {
+                showMessage('No pending attendance to process.', 'error');
+                return;
+            }
+
+            closePaymentModal();
+            
+            const handler = PaystackPop.setup({
+                key: PAYSTACK_PUBLIC_KEY,
+                email: currentUser.email,
+                amount: cdsSettings.latenessFee * 100, // Amount in kobo
+                currency: 'NGN',
+                ref: 'LATE_' + Math.floor((Math.random() * 1000000000) + 1),
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: "Corper Name",
+                            variable_name: "corper_name",
+                            value: currentUser.fullName
+                        },
+                        {
+                            display_name: "State Code",
+                            variable_name: "state_code",
+                            value: currentUser.stateCode
+                        },
+                        {
+                            display_name: "Payment Type",
+                            variable_name: "payment_type",
+                            value: "Lateness Fee"
+                        }
+                    ]
+                },
+                callback: function(response) {
+                    // Payment successful
+                    showLoading(true);
+                    completeAttendanceMarking(
+                        pendingAttendance.position,
+                        pendingAttendance.dateKey,
+                        pendingAttendance.deviceId,
+                        true,
+                        response.reference
+                    );
+                    pendingAttendance = false;
+                },
+                onClose: function() {
+                    showMessage('Payment cancelled. Attendance not marked.', 'error');
+                    pendingAttendance = false;
+                }
+            });
+            
+            handler.openIframe();
+        }
+
+        // Get current GPS position
+        function getCurrentPosition() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation is not supported by this browser.'));
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    resolve,
+                    (error) => reject(new Error('Unable to retrieve location. Please enable GPS.')),
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                );
+            });
+        }
+
+        // Calculate distance between two coordinates (in meters)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; // Distance in meters
+        }
+
+        // Show loading modal
+        function showLoading(show) {
+            const modal = document.getElementById('loadingModal');
+            modal.classList.toggle('hidden', !show);
+            modal.classList.toggle('flex', show);
+        }
+
+        // Show message modal
+        function showMessage(message, type) {
+            const modal = document.getElementById('messageModal');
+            const messageText = document.getElementById('messageText');
+            const messageIcon = document.getElementById('messageIcon');
+            
+            messageText.textContent = message;
+            
+            if (type === 'success') {
+                messageIcon.innerHTML = `
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                `;
+            } else {
+                messageIcon.innerHTML = `
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
+                `;
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Close message modal
+        function closeMessageModal() {
+            const modal = document.getElementById('messageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                await auth.signOut();
+                showLogin();
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        }
+
+        // Form validation helpers
+        function validateStateCode(stateCode) {
+            const pattern = /^[A-Z]{2}\/\d{2}[A-Z]\/\d{4}$/;
+            return pattern.test(stateCode);
+        }
+
+        // Add form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const stateCodeInputs = document.querySelectorAll('#regStateCode');
+            stateCodeInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const value = this.value.toUpperCase();
+                    this.value = value;
+                    
+                    if (value && !validateStateCode(value)) {
+                        this.setCustomValidity('Please enter valid state code format (e.g., NY/23B/4567)');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            });
+        });
+
+        // Auto-resize for mobile
+        function adjustForMobile() {
+            if (window.innerWidth < 640) {
+                document.body.classList.add('mobile-view');
+            } else {
+                document.body.classList.remove('mobile-view');
+            }
+        }
+
+        window.addEventListener('resize', adjustForMobile);
+        adjustForMobile();
+    </script>
+
+    <style>
+        @media (max-width: 640px) {
+            .mobile-view .text-4xl {
+                font-size: 2rem;
+                line-height: 2.5rem;
+            }
+            
+            .mobile-view .text-3xl {
+                font-size: 1.875rem;
+                line-height: 2.25rem;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Button hover effects */
+        button:hover {
+            transform: translateY(-1px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        /* Form focus effects */
+        input:focus {
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+        
+        /* Card hover effects */
+        .bg-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        /* Responsive grid improvements */
+        @media (max-width: 1024px) {
+            .lg\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .lg\:col-span-2 {
+                grid-column: span 1;
+            }
+        }
+        
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 480px) {
+            .p-8 {
+                padding: 1rem;
+            }
+            
+            .text-2xl {
+                font-size: 1.5rem;
+                line-height: 2rem;
+            }
+            
+            .py-4 {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            
+            .px-6 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</body>
+</html>
